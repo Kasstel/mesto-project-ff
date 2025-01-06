@@ -29,7 +29,7 @@ function removeCard (el){
 
 function addCard(initialCards){
   initialCards.forEach(cards => {
-    const cardElement = createCard(cards);
+    const cardElement = createCard(cards,removeCard);
     cardUzel.append(cardElement);
   });
 }
