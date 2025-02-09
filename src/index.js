@@ -6,7 +6,7 @@ import {
   closePopup,
   handleFormSubmit,
   handleCreateSubmit,
-  openEditPopup
+  openEditPopup,
 } from "./components/modal.js";
 
 export const cardTemplate = document.querySelector("#card-template").content;
@@ -32,14 +32,13 @@ export const cardTitle = createForm.elements["place-name"];
 export const cardLink = createForm.elements.link;
 
 // Назначаем обработчики кликов для открытия
-editButton.addEventListener("click", () => 
-  {
-    openPopup(popupEdit);
-    const name = document.querySelector(".profile__title");
-    const job = document.querySelector(".profile__description");
-    nameInput.value = name.textContent
-    jobInput.value = job.textContent
-  });
+editButton.addEventListener("click", () => {
+  openPopup(popupEdit);
+  const name = document.querySelector(".profile__title");
+  const job = document.querySelector(".profile__description");
+  nameInput.value = name.textContent;
+  jobInput.value = job.textContent;
+});
 
 addButton.addEventListener("click", () => openPopup(popupNew));
 
@@ -54,8 +53,6 @@ popups.forEach((popup) => {
     }
   });
 });
-
-
 
 editForm.addEventListener("submit", handleFormSubmit);
 

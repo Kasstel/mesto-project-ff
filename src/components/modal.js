@@ -35,7 +35,6 @@ export function openPopup(popup) {
   document.addEventListener("keydown", handleEscClose);
 }
 
-
 // Функция закрытия модального окна
 export function closePopup(popup) {
   popup.classList.remove("popup_is-opened");
@@ -67,7 +66,7 @@ export function handleCreateSubmit(evt) {
     openImagePopup
   );
   cardUzel.prepend(cardElement);
-  cardTitle.value = ''
-  cardLink.value = ''
+  cardTitle.value = "";
+  cardLink.value = "";
   closePopup(popupNew);
 }
