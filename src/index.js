@@ -68,8 +68,7 @@ function handleCreateCardSubmit(evt) {
     openImagePopup
   );
   cardUzel.prepend(cardElement);
-  cardTitle.value = "";
-  cardLink.value = "";
+  evt.target.reset();
   closePopup(popupNew);
 }
 // Назначаем обработчики кликов для открытия
