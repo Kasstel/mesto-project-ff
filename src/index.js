@@ -1,41 +1,80 @@
 import "../src/pages/index.css";
 import { initialCards } from "./scripts/cards.js";
-import { addCard } from "./components/card.js";
 import {
   openPopup,
-  closePopup,
-  handleFormSubmit,
-  handleCreateSubmit,
-  openEditPopup,
+  closePopup
 } from "./components/modal.js";
+import {createCard, removeCard, likeImage} from './components/card.js'
 
-export const cardTemplate = document.querySelector("#card-template").content;
 
-export const cardUzel = document.querySelector(".places__list");
+const cardTemplate = document.querySelector("#card-template").content;
+
+const cardUzel = document.querySelector(".places__list");
 
 const popups = document.querySelectorAll(".popup");
 
 const editButton = document.querySelector(".profile__edit-button");
 const addButton = document.querySelector(".profile__add-button");
 
-export const popupEdit = document.querySelector(".popup_type_edit");
-export const popupNew = document.querySelector(".popup_type_new-card");
-export const popupImage = document.querySelector(".popup_type_image");
+const popupEdit = document.querySelector(".popup_type_edit");
+const popupNew = document.querySelector(".popup_type_new-card");
+const popupImage = document.querySelector(".popup_type_image");
 
 const editForm = document.forms["edit-profile"];
 const createForm = document.forms["new-place"];
 
-export const nameInput = editForm.elements.name;
-export const jobInput = editForm.elements.description;
+const nameInput = editForm.elements.name;
+const jobInput = editForm.elements.description;
 
-export const cardTitle = createForm.elements["place-name"];
-export const cardLink = createForm.elements.link;
+const cardTitle = createForm.elements["place-name"];
+const cardLink = createForm.elements.link;
 
+const popupImg = popupImage.querySelector(".popup__image");
+const popupText = popupImage.querySelector(".popup__caption");
+
+const name = document.querySelector(".profile__title");
+const job = document.querySelector(".profile__description");
+
+
+function openImagePopup(popup, imageSrc, imageAlt) {
+  popupImg.src = imageSrc;
+  popupImg.alt = imageAlt;
+  popupText.textContent = imageAlt;
+  openPopup(popup);
+}
+
+// Обработчик «отправки» формы, хотя пока
+// она никуда отправляться не будет
+function handleProfileFormSubmit(evt) {
+  evt.preventDefault();
+  name.textContent = nameInput.value;
+  job.textContent = jobInput.value;
+  closePopup(popupEdit);
+}
+
+// функция добавления карточки
+function handleCreateCardSubmit(evt) {
+  evt.preventDefault();
+  const initialCard = {
+    name: cardTitle.value,
+    link: cardLink.value,
+  };
+  const cardElement = createCard(
+    cardTemplate, 
+    popupImage,
+    initialCard,
+    removeCard,
+    likeImage,
+    openImagePopup
+  );
+  cardUzel.prepend(cardElement);
+  cardTitle.value = "";
+  cardLink.value = "";
+  closePopup(popupNew);
+}
 // Назначаем обработчики кликов для открытия
 editButton.addEventListener("click", () => {
   openPopup(popupEdit);
-  const name = document.querySelector(".profile__title");
-  const job = document.querySelector(".profile__description");
   nameInput.value = name.textContent;
   jobInput.value = job.textContent;
 });
@@ -54,8 +93,26 @@ popups.forEach((popup) => {
   });
 });
 
-editForm.addEventListener("submit", handleFormSubmit);
+// @todo: Вывести карточки на страницу
 
-createForm.addEventListener("submit", handleCreateSubmit);
+function addCard(initialCards) {
+  initialCards.forEach((cards) => {
+    const cardElement = createCard(
+      cardTemplate, 
+      popupImage,
+      cards,
+      removeCard,
+      likeImage,
+      openImagePopup
+    );
+    cardUzel.append(cardElement);
+  });
+}
+
+
+editForm.addEventListener("submit", handleProfileFormSubmit);
+
+createForm.addEventListener("submit", handleCreateCardSubmit);
 
 addCard(initialCards);
+
