@@ -45,7 +45,9 @@ const popupAvatar = document.querySelector(".popup_type_new-avatar");
 const avatarForm = popupAvatar.querySelector(".popup__form");
 const avatarInput = avatarForm.querySelector(".popup__input");
 
-profileImage.addEventListener("click", () => openPopup(popupAvatar));
+profileImage.addEventListener("click", () => {
+  openPopup(popupAvatar), clearValidation(avatarForm, validationConfig);
+});
 
 function setButtonLoadingState(button, isLoading, defaultText = "Сохранить") {
   if (isLoading) {
@@ -62,6 +64,7 @@ function handleUpdateAvatarSubmit(evt) {
   const button = evt.submitter;
   setButtonLoadingState(button, true);
   const newAvatarUrl = avatarInput.value;
+  console.log(newAvatarUrl);
   changeAvatar(newAvatarUrl)
     .then((data) => {
       profileImage.style.backgroundImage = `url(${data.avatar})`;
@@ -123,9 +126,7 @@ export function handleLikeClick(cardId, event, likeCountElement) {
     .catch((err) => console.error("Ошибка при обновлении лайка:", err));
 }
 
-avatarForm.addEventListener("submit", () => {
-  handleUpdateAvatarSubmit, clearValidation(avatarForm, validationConfig);
-});
+avatarForm.addEventListener("submit", handleUpdateAvatarSubmit);
 
 function openImagePopup(popup, imageSrc, imageAlt) {
   popupImg.src = imageSrc;
