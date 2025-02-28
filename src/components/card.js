@@ -1,5 +1,12 @@
 import { deleteCard } from "../scripts/api";
-export function createCard(cardTemplate, popupImage, cardInfo, currentUserId, handleLikeClick, openImagePopup) {
+export function createCard(
+  cardTemplate,
+  popupImage,
+  cardInfo,
+  currentUserId,
+  handleLikeClick,
+  openImagePopup
+) {
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
   const cardDeleteButton = cardElement.querySelector(".card__delete-button");
   const cardImage = cardElement.querySelector(".card__image");
@@ -9,24 +16,24 @@ export function createCard(cardTemplate, popupImage, cardInfo, currentUserId, ha
 
   cardImage.src = cardInfo.link;
   cardImage.alt = cardInfo.name;
-  
+
   cardTitle.textContent = cardInfo.name;
 
   likeCount.textContent = cardInfo.likes.length;
-  
-  cardDeleteButton.addEventListener("click", () => deleteCard(cardElement, cardInfo._id));
-  
-  if (cardInfo.likes.some(user => user._id === currentUserId)) {
-    cardLikeButton.classList.add('card__like-button_is-active');
-  }
-  
 
-  if (cardInfo.owner._id !== currentUserId){
-    cardDeleteButton.style.display = 'none';
-  }
-  
+  cardDeleteButton.addEventListener("click", () =>
+    deleteCard(cardElement, cardInfo._id)
+  );
 
-  cardLikeButton.addEventListener("click",  (event) => {
+  if (cardInfo.likes.some((user) => user._id === currentUserId)) {
+    cardLikeButton.classList.add("card__like-button_is-active");
+  }
+
+  if (cardInfo.owner._id !== currentUserId) {
+    cardDeleteButton.style.display = "none";
+  }
+
+  cardLikeButton.addEventListener("click", (event) => {
     handleLikeClick(cardInfo._id, event, likeCount);
   });
 
@@ -34,12 +41,5 @@ export function createCard(cardTemplate, popupImage, cardInfo, currentUserId, ha
     openImagePopup(popupImage, evt.target.src, evt.target.alt)
   );
 
-  
   return cardElement;
 }
-
-
-
-
-
-
