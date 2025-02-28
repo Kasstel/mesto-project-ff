@@ -55,6 +55,9 @@ function setButtonLoadingState(button, isLoading, defaultText = "Сохрани�
   }
 }
 
+
+//функции-отправки
+
 function handleUpdateAvatarSubmit(evt){
   evt.preventDefault();
   const button = evt.submitter; 
@@ -69,19 +72,6 @@ function handleUpdateAvatarSubmit(evt){
   .catch(err => console.error(err))
   .finally(()=> setButtonLoadingState(button, false))
 }
-
-avatarForm.addEventListener('submit', handleUpdateAvatarSubmit);
-
-
-
-
-function openImagePopup(popup, imageSrc, imageAlt) {
-  popupImg.src = imageSrc;
-  popupImg.alt = imageAlt;
-  popupText.textContent = imageAlt;
-  openPopup(popup);
-}
-
 
 function handleProfileFormSubmit(evt) {
   evt.preventDefault();
@@ -98,7 +88,6 @@ function handleProfileFormSubmit(evt) {
   .finally(()=> setButtonLoadingState(button, false))
 }
 
-// функция добавления карточки
 function handleCreateCardSubmit(evt) {
   evt.preventDefault();
   const button = evt.submitter; 
@@ -121,6 +110,35 @@ function handleCreateCardSubmit(evt) {
 .finally(()=>{setButtonLoadingState(button, false)})
 }
 
+export function handleLikeClick( cardId, event, likeCountElement) {
+  const likeButton = event.target;
+  const isLiked = likeButton.classList.contains('card__like-button_is-active');
+
+  const request = isLiked ? unlikeCard(cardId) : likeCard(cardId);
+
+  request
+    .then(updatedCard => {
+      likeButton.classList.toggle('card__like-button_is-active');
+      likeCountElement.textContent = updatedCard.likes.length;
+    })
+    .catch(err => console.error('Ошибка при обновлении лайка:', err));
+}
+
+
+
+avatarForm.addEventListener('submit', ()=>{handleUpdateAvatarSubmit, clearValidation(avatarForm, validationConfig)});
+
+
+
+
+function openImagePopup(popup, imageSrc, imageAlt) {
+  popupImg.src = imageSrc;
+  popupImg.alt = imageAlt;
+  popupText.textContent = imageAlt;
+  openPopup(popup);
+}
+
+
 
 
 editButton.addEventListener("click", () => {
@@ -137,7 +155,6 @@ addButton.addEventListener("click", () => {
   clearValidation(createForm, validationConfig)
 });
 
-// Закрытие по клику на крестик или фон
 popups.forEach((popup) => {
   popup.addEventListener("click", (evt) => {
     if (
@@ -152,23 +169,6 @@ popups.forEach((popup) => {
 editForm.addEventListener("submit", handleProfileFormSubmit);
 
 createForm.addEventListener("submit", handleCreateCardSubmit);
-
-
-
-export function handleLikeClick( cardId, event, likeCountElement) {
-  const likeButton = event.target;
-  const isLiked = likeButton.classList.contains('card__like-button_is-active');
-
-  const request = isLiked ? unlikeCard(cardId) : likeCard(cardId);
-
-  request
-    .then(updatedCard => {
-      likeButton.classList.toggle('card__like-button_is-active');
-      likeCountElement.textContent = updatedCard.likes.length;
-    })
-    .catch(err => console.error('Ошибка при обновлении лайка:', err));
-}
-
 
 
 function addCard() {
