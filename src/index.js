@@ -2,14 +2,12 @@ import "../src/pages/index.css";
 import {
   changeAvatar,
   getUserId,
-  likeCard,
-  unlikeCard,
   getInitialCards,
   changeProfileInfo,
   submitCard,
 } from "./scripts/api.js";
 import { openPopup, closePopup } from "./components/modal.js";
-import { createCard } from "./components/card.js";
+import { createCard, handleLikeClick } from "./components/card.js";
 import { enableValidation, clearValidation } from "./scripts/validation.js";
 
 const cardTemplate = document.querySelector("#card-template").content;
@@ -94,9 +92,9 @@ function handleCreateCardSubmit(evt) {
   setButtonLoadingState(button, true);
   Promise.all([submitCard(cardTitle.value, cardLink.value), getUserId()])
     .then(([result, userId]) => {
+      initUserProfile(userId);
       const cardElement = createCard(
         cardTemplate,
-        popupImage,
         result,
         userId._id,
         handleLikeClick,
@@ -112,27 +110,13 @@ function handleCreateCardSubmit(evt) {
     });
 }
 
-export function handleLikeClick(cardId, event, likeCountElement) {
-  const likeButton = event.target;
-  const isLiked = likeButton.classList.contains("card__like-button_is-active");
-
-  const request = isLiked ? unlikeCard(cardId) : likeCard(cardId);
-
-  request
-    .then((updatedCard) => {
-      likeButton.classList.toggle("card__like-button_is-active");
-      likeCountElement.textContent = updatedCard.likes.length;
-    })
-    .catch((err) => console.error("Ошибка при обновлении лайка:", err));
-}
-
 avatarForm.addEventListener("submit", handleUpdateAvatarSubmit);
 
-function openImagePopup(popup, imageSrc, imageAlt) {
+function openImagePopup(imageSrc, imageAlt) {
   popupImg.src = imageSrc;
   popupImg.alt = imageAlt;
   popupText.textContent = imageAlt;
-  openPopup(popup);
+  openPopup(popupImage);
 }
 
 editButton.addEventListener("click", () => {
@@ -162,20 +146,31 @@ editForm.addEventListener("submit", handleProfileFormSubmit);
 
 createForm.addEventListener("submit", handleCreateCardSubmit);
 
+function initUserProfile(userData) {
+  console.log(userData);
+  name.textContent = userData.name;
+  job.textContent = userData.about;
+  profileImage.style.backgroundImage = `url(${userData.avatar})`;
+}
+
 function addCard() {
-  Promise.all([getInitialCards(), getUserId()]).then(([cards, userId]) => {
-    cards.forEach((card) => {
-      const cardElement = createCard(
-        cardTemplate,
-        popupImage,
-        card,
-        userId._id,
-        handleLikeClick,
-        openImagePopup
-      );
-      cardUzel.append(cardElement);
+  Promise.all([getInitialCards(), getUserId()])
+    .then(([cards, userId]) => {
+      initUserProfile(userId);
+      cards.forEach((card) => {
+        const cardElement = createCard(
+          cardTemplate,
+          card,
+          userId._id,
+          handleLikeClick,
+          openImagePopup
+        );
+        cardUzel.append(cardElement);
+      });
+    })
+    .catch((err) => {
+      console.log(err);
     });
-  });
 }
 
 addCard();
